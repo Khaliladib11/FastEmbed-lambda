@@ -1,0 +1,40 @@
+service: fastembed-lambda
+frameworkVersion: '3'
+
+custom:
+  service: ${env:SERVICE, 'fastembed'}
+
+provider:
+  name: aws
+  runtime: python3.9
+  architecture: x86_64
+  stage: ${env:BUILD_STAGE, 'development'}
+  region: ${env:AWS_REGION, 'eu-west-1'}
+  role: fastembed-lambda-role
+  timeout: 900
+  deploymentBucket:
+    name: fastembed-serverless-bucket
+    serverSideEncryption: aws:kms
+  ecr:
+    images:
+      fastembedImg:
+        path: ./
+        file: Dockerfile
+
+functions:
+  invokeGlobalPreprocessing:
+    name: fastembed-lambda
+    image: fastembedImg
+    maximumRetryAttempts: 0
+
+package:
+  individually: true
+  patterns:
+    - '!poetry.lock'
+    - '**/**'
+  excludeDevDependencies: true
+
+plugins:
+  - serverless-better-credentials
+  - serverless-python-requirements
+  - serverless-deployment-bucket
