@@ -10,7 +10,7 @@ provider:
   architecture: x86_64
   stage: ${env:BUILD_STAGE, 'development'}
   region: ${env:AWS_REGION, 'eu-west-1'}
-  role: fastembed-lambda-role
+  role: arn:aws:iam::651762338902:role/fastembed-lambda-role
   timeout: 900
   deploymentBucket:
     name: fastembed-serverless-bucket
@@ -22,7 +22,7 @@ provider:
         file: Dockerfile
 
 functions:
-  invokeGlobalPreprocessing:
+  fastembed:
     name: fastembed-lambda
     image: fastembedImg
     maximumRetryAttempts: 0
